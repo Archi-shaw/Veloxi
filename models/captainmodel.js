@@ -17,13 +17,13 @@ const capatinSchema = new mongoose.Schema({
         minlength:[5,'Email should be atleast of 5 characters long'],
      },
      password:{
-        type:string,
+        type:String,
         required:true,
         minlength:[6, 'Password should be of minimum length of 6'],
         select:false,
      },
      socketId:{
-        type:string,
+        type: String,
         default: '',
      },
      status: {
