@@ -4,13 +4,13 @@ const {validationResult} = require('express-validator');
 const blacklistModel = require('../models/blacklistokenmodel')
 
 module.exports.registercaptain = async (req, res, next) => {
-
+   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
 
-    const { name, email, password, vehicle } = req.body;
+    const { fullName, email, password, vehicle } = req.body;
 
     const isexistingemail = await captainModel.findOne({ email });
 
@@ -21,18 +21,21 @@ module.exports.registercaptain = async (req, res, next) => {
     const hashedpassword = await captainModel.hashpassword(password);
 
     const captain = await captainService.createCaptain({
-        name,
+        fullName,
         email,
         password: hashedpassword,
         vehicle  
     });
 
-    const token = captain.generateAuthToken(); 
+const token = captain.generateAuthToken();
 
     return res.status(201).json({
         token,
         captain   
     });
+   } catch(err){
+      return res.status(500).json({message: err.message});
+   }
 };
 
 
@@ -50,9 +53,9 @@ module.exports.loginCaptain = async(req,res,next) => {
       if(!isMatch){
          return res.status(400).json({message: "Invalid email or password"});
       }
-      const token = existinguser.generateToken();
+      const token = existinguser.generateAuthToken();
       res.cookie('token',token);
-      return res.status(200).json({message: "Login successful", token, user: existinguser});
+      return res.status(200).json({message: "Login successful", token, captain: existinguser});
 }
 
 module.exports.getProfile = async(req,res,next) => {
@@ -60,8 +63,14 @@ module.exports.getProfile = async(req,res,next) => {
 }
 
 module.exports.logoutCaptain = async(req,res, next) => {
-   const token = req.cookies.token || req.headers.authorization.split(" ")[1];
+   const token =
+  req.cookies.token ||
+  (req.headers.authorization &&
+   req.headers.authorization.split(" ")[1]);
 
+if (!token) {
+  return res.status(400).json({ message: "No token provided" });
+}
    await blacklistModel.create({ token});
 
    res.clearCookie('token');

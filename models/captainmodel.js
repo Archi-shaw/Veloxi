@@ -4,11 +4,18 @@ const jwt = require('jsonwebtoken');
 
 
 const capatinSchema = new mongoose.Schema({
-     name: {
-        type:String,
-        required: true,
-         minlength:[3, 'Name should be minimum of 3 length'],
-     },
+    fullName: {
+    first_name: {
+      type: String,
+      required: true,
+      minlength: [3, 'First name must be at least 3 characters long']
+    },
+    last_name: {
+      type: String,
+      required: true,
+      minlength: [3, 'Last name must be at least 3 characters long']
+    }
+  },
      email:{
         type:String,
         unique:true,

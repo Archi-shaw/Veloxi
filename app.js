@@ -14,7 +14,7 @@ app.use(cookieParser());
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/captains',captainroutes);
+app.use('/captain',captainroutes);
 app.get('/', (req,res) => {
     res.send('Hello World');
 });

@@ -5,9 +5,14 @@ const userController = require('../controllers/user.controller');
 const authMiddleware = require('../middleware/auth');
 
 router.post('/register', [
-    body('name')
-        .isLength({ min: 3 })
-        .withMessage('First name must be at least 3 characters long'),
+    body('fullName.first_name')
+  .isLength({ min: 3 })
+  .withMessage('First name must be at least 3 characters long'),
+
+body('fullName.last_name')
+  .isLength({ min: 3 })
+  .withMessage('Last name must be at least 3 characters long'),
+
 
     body('email')
         .isEmail()
